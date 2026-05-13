@@ -17,7 +17,8 @@ void main()
     float fragmentDepth = texture(uSourceDepthTexture, TexCoord).r;
     if (fragmentDepth != 1)
     {
-        gl_FragDepth = fragmentDepth; // SSRD: Write depth to OpenGL depth buffer
+        // Add a small depth bias to push DH LODs behind vanilla chunks to prevent Z-fighting
+        gl_FragDepth = min(fragmentDepth + 0.0001, 0.999999); 
         fragColor = texture(uSourceColorTexture, TexCoord);
     }
     else

@@ -30,6 +30,11 @@ public class VanillaDispatcherMixin {
         SSRDState.IS_SUBLEVEL_RENDER.set(true);
         SSRDState.SUBLEVELS_VISIBLE_THIS_FRAME = true;
         
+        // Orthographic projection (used in GUI/Diagrams) has m33 == 1.0f. Perspective has m33 == 0.0f.
+        if (Math.abs(projection.m33() - 1.0f) < 0.01f) {
+            return;
+        }
+
         this.ssd$savedFogStart = com.mojang.blaze3d.systems.RenderSystem.getShaderFogStart();
         this.ssd$savedFogEnd = com.mojang.blaze3d.systems.RenderSystem.getShaderFogEnd();
         this.ssd$savedProj.set(projection);
@@ -67,6 +72,10 @@ public class VanillaDispatcherMixin {
     @Inject(method = "renderSectionLayer", at = @At("RETURN"))
     private void ssd$postRender(Iterable<ClientSubLevel> sublevels, RenderType renderType, ShaderInstance shader, double cameraX, double cameraY, double cameraZ, Matrix4f modelView, Matrix4f projection, float partialTicks, CallbackInfo ci) {
         SSRDState.IS_SUBLEVEL_RENDER.set(false);
+        
+        if (Math.abs(projection.m33() - 1.0f) < 0.01f) {
+            return;
+        }
         
         com.mojang.blaze3d.systems.RenderSystem.depthFunc(this.ssd$savedDepthFunc);
         

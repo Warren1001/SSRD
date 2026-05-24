@@ -20,10 +20,6 @@ public abstract class SubLevelRenderSectionManagerMixin {
     private void ssd$preRender(ChunkRenderMatrices originalMatrices, RenderType layer, double camX, double camY, double camZ, CallbackInfo ci) {
         SSRDState.IS_SUBLEVEL_RENDER.set(true);
         SSRDState.SUBLEVELS_VISIBLE_THIS_FRAME = true;
-
-
-        com.mojang.blaze3d.systems.RenderSystem.setShaderFogStart(1000000.0f);
-        com.mojang.blaze3d.systems.RenderSystem.setShaderFogEnd(2000000.0f);
     }
 
     @Inject(method = "render", at = @At("RETURN"))

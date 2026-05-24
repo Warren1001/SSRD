@@ -17,10 +17,6 @@ public class VanillaDispatcherMixin {
     @Unique
     private final org.joml.Matrix4f ssd$savedProj = new org.joml.Matrix4f();
     @Unique
-    private float ssd$savedFogStart;
-    @Unique
-    private float ssd$savedFogEnd;
-    @Unique
     private int ssd$savedDepthFunc;
 
     @Inject(method = "renderSectionLayer", at = @At("HEAD"), cancellable = true)
@@ -35,8 +31,6 @@ public class VanillaDispatcherMixin {
             return;
         }
 
-        this.ssd$savedFogStart = com.mojang.blaze3d.systems.RenderSystem.getShaderFogStart();
-        this.ssd$savedFogEnd = com.mojang.blaze3d.systems.RenderSystem.getShaderFogEnd();
         this.ssd$savedProj.set(projection);
         this.ssd$savedDepthFunc = org.lwjgl.opengl.GL11.glGetInteger(org.lwjgl.opengl.GL11.GL_DEPTH_FUNC);
 
@@ -63,8 +57,6 @@ public class VanillaDispatcherMixin {
             shader.PROJECTION_MATRIX.upload();
         }
 
-        com.mojang.blaze3d.systems.RenderSystem.setShaderFogStart(1000000.0f);
-        com.mojang.blaze3d.systems.RenderSystem.setShaderFogEnd(2000000.0f);
         com.mojang.blaze3d.systems.RenderSystem.enableDepthTest();
         com.mojang.blaze3d.systems.RenderSystem.depthMask(true);
     }
@@ -84,7 +76,5 @@ public class VanillaDispatcherMixin {
             shader.PROJECTION_MATRIX.set(projection);
             shader.PROJECTION_MATRIX.upload();
         }
-        com.mojang.blaze3d.systems.RenderSystem.setShaderFogStart(this.ssd$savedFogStart);
-        com.mojang.blaze3d.systems.RenderSystem.setShaderFogEnd(this.ssd$savedFogEnd);
     }
 }

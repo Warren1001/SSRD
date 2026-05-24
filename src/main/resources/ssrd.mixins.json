@@ -23,7 +23,8 @@
     "VanillaDispatcherMixin",
     "GameRendererProjMixin",
     "DHShaderSourceMixin",
-    "DHRenderUtilProjMixin"
+    "DHRenderUtilProjMixin",
+    "EntityRenderDispatcherMixin"
   ],
   "server": [
   ],

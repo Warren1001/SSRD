@@ -19,11 +19,9 @@ public abstract class DHShaderSourceMixin {
                 // we inject custom logic to check if the vanilla fragment is significantly closer than the DH fragment.
                 String injected = source.replace(
                     "fragColor = mix(combinedMcDhColor, dhColor, fadeStep);",
-                    "if (mcFragmentDistance > uEndFadeBlockDistance) {\n" +
-                    "            float dhDist = length(dhVertexWorldPos.xzy);\n" +
-                    "            if (mcFragmentDistance < dhDist - 2.0) {\n" +
-                    "                fadeStep = 0.0;\n" +
-                    "            }\n" +
+                    "float dhDist = length(dhVertexWorldPos.xzy);\n" +
+                    "        if (mcFragmentDistance < dhDist - 2.0) {\n" +
+                    "            fadeStep = 0.0;\n" +
                     "        }\n" +
                     "        fragColor = mix(combinedMcDhColor, dhColor, fadeStep);"
                 );

@@ -2,13 +2,15 @@
   "required": true,
   "minVersion": "0.8",
   "package": "net.ranold.mixin",
+  "plugin": "net.ranold.SSRDMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "SubLevelTrackingSystemMixin",
     "SubLevelHoldingChunkMapMixin",
     "EntityTypeMixin",
     "ChunkMapMixin",
-    "ServerLevelMixin"
+    "ServerLevelMixin",
+    "ChunkMapTrackedEntityMixin"
   ],
   "client": [
     "RenderSectionManagerMixin",

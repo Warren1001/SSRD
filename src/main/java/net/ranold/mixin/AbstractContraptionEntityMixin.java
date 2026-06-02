@@ -12,7 +12,7 @@ public class AbstractContraptionEntityMixin {
     @Inject(method = "shouldRenderAtSqrDistance", at = @At("HEAD"), cancellable = true)
     private void ssd$alwaysRenderContraptionsFar(double distance, CallbackInfoReturnable<Boolean> cir) {
         String className = this.getClass().getName();
-        if (className.contains("Contraption") || className.contains("Carriage")) {
+        if (className.contains("Contraption") || className.contains("Carriage") || className.contains("Propeller")) {
             cir.setReturnValue(true);
         }
     }

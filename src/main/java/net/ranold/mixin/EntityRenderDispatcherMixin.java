@@ -40,17 +40,25 @@ public class EntityRenderDispatcherMixin {
         String className = entity.getClass().getName();
         if (className.contains("Contraption") || className.contains("Carriage")) {
             try {
-                Object helper = dev.ryanhcode.sable.Sable.HELPER;
-                Object containing = helper.getClass().getMethod("getContaining", Entity.class).invoke(helper, entity);
-                if (containing != null && containing.getClass().getName().contains("ClientSubLevel")) {
+                // Safely get HELPER via reflection to handle optional Sable
+                Class<?> sableClass = Class.forName("dev.ryanhcode.sable.Sable");
+                Object helper = sableClass.getField("HELPER").get(null);
+
+                // Try getContaining first
+                Object containing = helper.getClass().getMethod("getContaining", Entity.class).invoke(helper, entity); 
+                if (containing != null && containing.getClass().getName().contains("SubLevel")) {
                     return true;
                 }
+
+                // Then try getTrackingSubLevel
                 Object tracking = helper.getClass().getMethod("getTrackingSubLevel", Entity.class).invoke(helper, entity);
-                if (tracking != null && tracking.getClass().getName().contains("ClientSubLevel")) {
+                if (tracking != null && tracking.getClass().getName().contains("SubLevel")) {
                     return true;
                 }
+            } catch (ClassNotFoundException e) {
+                // Sable not present, ignore
             } catch (Exception e) {
-                // Ignore
+                //com.mojang.logging.LogUtils.getLogger().error("SSRD: Error in EntityRenderDispatcherMixin", e);
             }
         }
         return false;

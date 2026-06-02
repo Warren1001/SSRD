@@ -7,10 +7,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -33,7 +30,7 @@ public class ssrd {
         modEventBus.addListener(this::registerPayloads);
         
         NeoForge.EVENT_BUS.register(this);
-        LOGGER.info("SSRD: Initialized v0.5.2 (Standard Mode)");
+        LOGGER.info("SSRD: Initialized v{} (Standard Mode)", modContainer.getModInfo().getVersion());
     }
 
     private void registerPayloads(final RegisterPayloadHandlersEvent event) {
@@ -59,19 +56,15 @@ public class ssrd {
     }
 
     @SubscribeEvent
-    public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-            if (serverPlayer.connection.hasChannel(ServerConfigSyncPacket.TYPE)) {
-                int chunks = (int) Math.ceil(Config.physicsTrackingRange / 16.0);
-                net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(serverPlayer, new ServerConfigSyncPacket(chunks));
-            }
-        }
+    public void onRegisterCommands(net.neoforged.neoforge.event.RegisterCommandsEvent event) {
+        SSRDCommand.register(event.getDispatcher());
     }
 
     @SubscribeEvent
-    public void onEntityJoin(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide && event.getEntity().getUUID().equals(net.minecraft.client.Minecraft.getInstance().player != null ? net.minecraft.client.Minecraft.getInstance().player.getUUID() : null)) {
-            net.neoforged.neoforge.network.PacketDistributor.sendToServer(new ClientConfigSyncPacket(Config.physicsRenderDistance));
+    public void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+            int chunks = (int) Math.ceil(Config.physicsTrackingRange / 16.0);
+            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(serverPlayer, new ServerConfigSyncPacket(chunks));
         }
     }
 }

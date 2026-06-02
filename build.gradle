@@ -13,6 +13,7 @@ repositories {
     maven {
         url = "https://api.modrinth.com/maven"
     }
+    maven { url = "https://maven.createmod.net" } // Flywheel
 }
 
 base {
@@ -50,6 +51,8 @@ dependencies {
     implementation "maven.modrinth:sodium:mc1.21.1-0.6.13-neoforge"
     implementation "maven.modrinth:sable:1.2.2+mc1.21.1"
     implementation "maven.modrinth:distanthorizons:3.0.3-b-1.21.1"
+
+    compileOnly "dev.engine-room.flywheel:flywheel-neoforge-api-1.21.1:1.0.6"
 }
 
 // Correct resources handling to include both normal resources and expanded templates

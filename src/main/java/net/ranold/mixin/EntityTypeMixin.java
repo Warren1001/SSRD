@@ -16,8 +16,9 @@ public class EntityTypeMixin {
         EntityType<?> type = (EntityType<?>) (Object) this;
         String name = EntityType.getKey(type).toString();
         
-        // Check if it's a Create contraption
-        if (name.startsWith("create:") && (name.contains("contraption") || name.contains("carriage"))) {
+        // Check if it's a Create or Simulated contraption
+        boolean isContraption = name.startsWith("create:") || name.startsWith("aeronautics:") || name.startsWith("offroad:");
+        if (isContraption && (name.contains("contraption") || name.contains("carriage") || name.contains("propeller"))) {
             int chunks = (int) Math.ceil(Config.physicsTrackingRange / 16.0);
             int defaultRange = cir.getReturnValue() != null ? cir.getReturnValue() : 5;
             int newRange = Math.max(defaultRange, chunks);

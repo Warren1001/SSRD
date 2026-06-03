@@ -68,9 +68,32 @@ public class SubLevelTrackingSystemMixin {
 
         double range = net.ranold.Config.physicsTrackingRange; // Server's default
         if (player instanceof ServerPlayer sp) {
-            Integer requested = net.ranold.ssrd.playerRequestedRanges.get(sp);
-            if (requested != null) {
-                range = requested * 16.0;
+            boolean hasMod = false;
+            try {
+                Object listener = sp.getClass().getField("connection").get(sp);
+                java.lang.reflect.Field connField = listener.getClass().getSuperclass().getDeclaredField("connection");
+                connField.setAccessible(true);
+                Object connection = connField.get(listener);
+                
+                java.lang.reflect.Field channelField = connection.getClass().getDeclaredField("channel");
+                channelField.setAccessible(true);
+                io.netty.channel.Channel channel = (io.netty.channel.Channel) channelField.get(connection);
+                
+                var networkRegistryClass = Class.forName("net.neoforged.neoforge.network.registration.NetworkRegistry");
+                var channelsAttrField = networkRegistryClass.getField("CHANNELS_ATTRIBUTE");
+                var channelsAttrKey = (io.netty.util.AttributeKey<java.util.Map<net.minecraft.resources.ResourceLocation, ?>>) channelsAttrField.get(null);
+                
+                var attr = channel.attr(channelsAttrKey).get();
+                if (attr != null && attr.containsKey(net.ranold.ServerConfigSyncPacket.TYPE.id())) {
+                    hasMod = true;
+                }
+            } catch (Exception ignored) {}
+
+            if (!hasMod) {
+                // Default vanilla range logic
+                range = sp.requestedViewDistance() * 16.0;
+            } else {
+                range = net.ranold.ssrd.getPlayerRequestedRange(sp) * 16.0;
             }
         }
 

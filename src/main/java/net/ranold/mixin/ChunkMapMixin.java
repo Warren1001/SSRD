@@ -47,6 +47,32 @@ public abstract class ChunkMapMixin {
                 java.util.Collection<java.util.UUID> trackingPlayers = (java.util.Collection<java.util.UUID>) trackingPlayersField.get(slObj);
                 
                 if (trackingPlayers.contains(player.getUUID())) {
+                    // SSRD: Only force chunk tracking if player has the mod
+                    boolean hasMod = false;
+                    try {
+                        Object listener = player.getClass().getField("connection").get(player);
+                        java.lang.reflect.Field connField = listener.getClass().getSuperclass().getDeclaredField("connection");
+                        connField.setAccessible(true);
+                        Object connection = connField.get(listener);
+                        
+                        java.lang.reflect.Field channelField = connection.getClass().getDeclaredField("channel");
+                        channelField.setAccessible(true);
+                        io.netty.channel.Channel channel = (io.netty.channel.Channel) channelField.get(connection);
+                        
+                        var networkRegistryClass = Class.forName("net.neoforged.neoforge.network.registration.NetworkRegistry");
+                        var channelsAttrField = networkRegistryClass.getField("CHANNELS_ATTRIBUTE");
+                        var channelsAttrKey = (io.netty.util.AttributeKey<java.util.Map<net.minecraft.resources.ResourceLocation, ?>>) channelsAttrField.get(null);
+                        
+                        var attr = channel.attr(channelsAttrKey).get();
+                        if (attr != null && attr.containsKey(net.ranold.ServerConfigSyncPacket.TYPE.id())) {
+                            hasMod = true;
+                        }
+                    } catch (Exception ignored) {}
+
+                    if (!hasMod) {
+                        continue;
+                    }
+
                     // Access plot field on SubLevel
                     java.lang.reflect.Field plotField = slObj.getClass().getSuperclass().getDeclaredField("plot");
                     plotField.setAccessible(true);

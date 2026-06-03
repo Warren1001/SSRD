@@ -11,6 +11,7 @@ import java.util.Set;
 
 public class SSRDMixinPlugin implements IMixinConfigPlugin {
     private static boolean isDHLoaded = false;
+    private static boolean isVoxyLoaded = false;
 
     @Override
     public void onLoad(String mixinPackage) {
@@ -19,6 +20,13 @@ public class SSRDMixinPlugin implements IMixinConfigPlugin {
             isDHLoaded = true;
         } catch (ClassNotFoundException e) {
             isDHLoaded = false;
+        }
+
+        try {
+            Class.forName("me.cortex.voxy.Voxy", false, this.getClass().getClassLoader());
+            isVoxyLoaded = true;
+        } catch (ClassNotFoundException e) {
+            isVoxyLoaded = false;
         }
     }
 

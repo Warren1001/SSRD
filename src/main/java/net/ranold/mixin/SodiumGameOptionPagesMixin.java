@@ -30,7 +30,7 @@ public class SodiumGameOptionPagesMixin {
             OptionGroup firstGroup = groups.get(0);
             List<Option<?>> options = new ArrayList<>(((OptionGroupAccessor) firstGroup).getOptions());
 
-            // Safe DH sync
+            // Safe DH / Voxy sync
             int maxDistance = 4096;
             try {
                 if (net.neoforged.fml.loading.LoadingModList.get().getModFileById("distanthorizons") != null) {
@@ -38,6 +38,11 @@ public class SodiumGameOptionPagesMixin {
                     if (dhConfig != null) {
                         maxDistance = dhConfig.graphics().chunkRenderDistance().getValue();
                     }
+                } else if (net.neoforged.fml.loading.LoadingModList.get().getModFileById("voxy") != null) {
+                    // Pull from VoxyConfig.CONFIG.sectionRenderDistance reflectively to avoid compile-time dependency
+                    Class<?> configClass = Class.forName("me.cortex.voxy.client.config.VoxyConfig");
+                    Object configInstance = configClass.getField("CONFIG").get(null);
+                    maxDistance = configClass.getField("sectionRenderDistance").getInt(configInstance);
                 }
             } catch (Throwable ignored) {}
 

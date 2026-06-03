@@ -34,11 +34,34 @@ public class ChunkMapTrackedEntityMixin {
     }
 
     @Redirect(method = "updatePlayer", at = @At(value = "INVOKE", target = "Ljava/lang/Math;min(II)I"))
-    private int ssd$bypassViewDistanceClamp(int range, int viewDistanceBlocks) {
+    private int ssd$bypassViewDistanceClamp(int range, int viewDistanceBlocks, ServerPlayer player) {
         String name = EntityType.getKey(this.entity.getType()).toString();
         boolean isContraption = name.startsWith("create:") || name.startsWith("aeronautics:") || name.startsWith("offroad:");
         if (isContraption && (name.contains("contraption") || name.contains("carriage") || name.contains("propeller"))) {
-            return range; // Ignore the viewDistance clamp
+            boolean hasMod = false;
+            try {
+                Object listener = player.getClass().getField("connection").get(player);
+                java.lang.reflect.Field connField = listener.getClass().getSuperclass().getDeclaredField("connection");
+                connField.setAccessible(true);
+                Object connection = connField.get(listener);
+                
+                java.lang.reflect.Field channelField = connection.getClass().getDeclaredField("channel");
+                channelField.setAccessible(true);
+                io.netty.channel.Channel channel = (io.netty.channel.Channel) channelField.get(connection);
+                
+                var networkRegistryClass = Class.forName("net.neoforged.neoforge.network.registration.NetworkRegistry");
+                var channelsAttrField = networkRegistryClass.getField("CHANNELS_ATTRIBUTE");
+                var channelsAttrKey = (io.netty.util.AttributeKey<java.util.Map<net.minecraft.resources.ResourceLocation, ?>>) channelsAttrField.get(null);
+                
+                var attr = channel.attr(channelsAttrKey).get();
+                if (attr != null && attr.containsKey(net.ranold.ServerConfigSyncPacket.TYPE.id())) {
+                    hasMod = true;
+                }
+            } catch (Exception ignored) {}
+
+            if (hasMod) {
+                return range; // Ignore the viewDistance clamp
+            }
         }
         return Math.min(range, viewDistanceBlocks);
     }

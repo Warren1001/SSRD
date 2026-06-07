@@ -49,6 +49,7 @@ public class ssrd {
                     context.enqueueWork(() -> {
                         if (context.player() instanceof ServerPlayer sp) {
                             playerRequestedRanges.put(sp, payload.requestedRangeChunks());
+                            LOGGER.info("SSRD: Received range request from player {}: {} chunks", sp.getScoreboardName(), payload.requestedRangeChunks());
                         }
                     });
                 }

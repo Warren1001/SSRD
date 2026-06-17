@@ -25,6 +25,5 @@ body:
       label: "Description of the Bug"
       description: "Please provide a clear and concise description of what the bug is, what happens, and how to reproduce it if necesary."
       placeholder: "Describe the issue here..."
-      rows: 15
     validations:
       required: true

@@ -6,16 +6,16 @@ body:
   - type: input
     id: mod-version
     attributes:
-      label: Mod Version:
-      description: "What version of SSRD are you using?
+      label: "Mod Version"
+      description: "What version of SSRD are you using?"
       placeholder: "e.g., v1.8"
     validations:
       required: true
   - type: input
     id: other-mod-version
     attributes:
-      label: Other mods being used:
+      label: "Other mods being used"
       description: "What other mods are you using?"
-      placeholder: "e.g., Sodium 0.8.#/0.6.#, Distant Horzons/Voxy 1.#"
+      placeholder: "e.g., Sodium 0.8.#/0.6.#, Distant Horizons/Voxy 1.#"
     validations:
       required: true

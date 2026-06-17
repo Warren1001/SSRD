@@ -15,7 +15,16 @@ body:
     id: other-mod-version
     attributes:
       label: "Other mods being used"
-      description: "What other mods are you using?"
-      placeholder: "e.g., Sodium 0.8.#/0.6.#, Distant Horizons/Voxy 1.#"
+      description: "What other mods are you using, and their versions?"
+      placeholder: "e.g., Sodium 0.8.#, Distant Horizons 1.#"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description of the Bug"
+      description: "Please provide a clear and concise description of what the bug is, what happens, and how to reproduce it if necesary."
+      placeholder: "Describe the issue here..."
+      rows: 15
     validations:
       required: true
